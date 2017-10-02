@@ -135,3 +135,11 @@ deploy_key_rsa
 # databases
 *.sqlite3
 
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+dist
+build
+
+fabfile.py
