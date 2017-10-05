@@ -13,11 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from django.conf.urls import url, include
 from django.contrib import admin
+
+from blog.feeds import AllPostsRssFeed
+import haystack
+
+from tools import views as tools_view
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('blog.urls')),
     url(r'', include('comments.urls')),
+    url(r'^search/', include('haystack.urls')),
+    url(r'^all/rss/$', AllPostsRssFeed(), name='rss'),
+    url(r'^qrcode/(.+)$', tools_view.generate_qrcode, name='qrcode'),
 ]
