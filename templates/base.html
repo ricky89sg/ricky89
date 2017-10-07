@@ -144,9 +144,15 @@
                 <div class="widget widget-category">
                     <h3 class="widget-title"> Share </h3>
                     <div class="dropdown open">
-                        <button type="button" class="btn btn-light-outline" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">QR Code</button>
-                        <div class="dropdown-menu">
-                            <button class="dropdown-item" type="button"><img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.build_absolute_uri }}'></button>    
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"> Share QR Code </button>
+                        <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.build_absolute_uri }}" class="img-responsive">
+                                </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                     <!--div>
