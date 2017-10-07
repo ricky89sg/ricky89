@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'blog',
     'comments',
     'tools',
+    'wechat',
 ]
 
 MIDDLEWARE = [
