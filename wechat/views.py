@@ -1,48 +1,44 @@
-## coding=utf-8
+#coding:utf-8
 
-
-import hashlib 
-from django.http import HttpResponse 
-from django.shortcuts import render
+import hashlib
+import json
+from lxml import etree
+from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
-
-
-wechat_token = '909363995'  # 改成你自己设置的 token 就可以啦.
+from django.http import HttpResponse
+#from auto_reply.views import auto_reply_main # 修改这里
+ 
+WEIXIN_TOKEN = '909363995'
+ 
 @csrf_exempt
 def wechat(request):
-    if request.method == "GET":    # 确定微信发来了 GET, 得到所有参数
+    """
+    所有的消息都会先进入这个函数进行处理，函数包含两个功能，
+    微信接入验证是GET方法，
+    微信正常的收发消息是用POST方法。
+    """
+    if request.method == "GET":
         signature = request.GET.get("signature", None)
         timestamp = request.GET.get("timestamp", None)
         nonce = request.GET.get("nonce", None)
         echostr = request.GET.get("echostr", None)
-    	token = wechat_token 
-        range_dict = [token, timestamp, nonce] # 做成一个字典
-        range_dict.sort()  # 把字典排序
-        range_str = "%s%s%s" % tuple(range_dict)  # 转换成元祖
-        range_str = hashlib.sha1(range_str).hexdigest() 然后用 hashlib 加密一下.
-
-        if range_str == signature:
+        token = WEIXIN_TOKEN
+        tmp_list = [token, timestamp, nonce]
+        tmp_list.sort()
+        tmp_str = "%s%s%s" % tuple(tmp_list)
+        tmp_str = hashlib.sha1(tmp_str).hexdigest()
+        if tmp_str == signature:
             return HttpResponse(echostr)
         else:
-            return HttpResponse("weixin  index")  # 随便返回点儿什么
+            return HttpResponse("weixin  index")
+    else:
+        xml_str = smart_str(request.body)
+        request_xml = etree.fromstring(xml_str)
+        #response_xml = auto_reply_main(request_xml)# 修改这里
+        response_xml = request_xml
+        return HttpResponse(response_xml)
 
-    elif request.method == "POST":
-		# do something about POST here
-		str_xml = request.body.decode('utf-8')    #use body to get raw data
-		xml = etree.fromstring(str_xml)            
-		toUserName = xml.find('ToUserName').text
-		fromUserName = xml.find('FromUserName').text
-		createTime = xml.find('CreateTime').text
-		msgType = xml.find('MsgType').text
-		content = xml.find('Content').text   #获得用户所输入的内容
-		msgId = xml.find('MsgId').text
-		return render(request, 'reply_text.xml',
-			{
-				'toUserName': fromUserName,
-				'fromUserName': toUserName,
-				'createTime': time.time(),
-				'msgType': msgType,
-				'content': content,
-			},
-			content_type = 'application/xml'
-		)
+
+
+
+
