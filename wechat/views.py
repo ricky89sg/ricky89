@@ -32,11 +32,40 @@ def wechat(request):
         else:
             return HttpResponse("weixin  index")
     else:
+        toUserName = xml.find('ToUserName').text
+        fromUserName = xml.find('FromUserName').text
+        createTime = xml.find('CreateTime').text
+        msgType = xml.find('MsgType').text
+        content = xml.find('Content').text   #获得用户所输入的内容
+        msgId = xml.find('MsgId').text
+
+        return render(request, 'reply_text.xml',
+                      {'toUserName': fromUserName,
+                       'fromUserName': toUserName,
+                       'createTime': time.time(),
+                       'msgType': msgType,
+                       'content': content,
+                       },
+                       content_type = 'application/xml'
+        )
+        '''
+        regq = re.compile(r'\/.*$')
+    	'''
+    	'''
         xml_str = smart_str(request.body)
         request_xml = etree.fromstring(xml_str)
         #response_xml = auto_reply_main(request_xml)# 修改这里
-        response_xml = request_xml
-        return HttpResponse(response_xml)
+        '''
+    	'''
+        t = loader.get_template('text.xml')
+        c = {'toUser': toUser, 'fromUser': fromUser,'nowtime': nowtime, 'content': content}
+        return HttpResponse(t.render(c))
+    	'''
+
+        #return HttpResponse(response_xml)
+        
+
+
 
 
 
