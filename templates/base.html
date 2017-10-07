@@ -144,13 +144,14 @@
                 <div class="widget widget-category">
                     <h3 class="widget-title"> Share </h3>
                     <div class="dropdown open">
-                    <button type="button" class="btn btn-light-outline" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">QR Code</button>
-                    <div class="dropdown-menu">
-                        <button class="dropdown-item" type="button"><img src='/qrcode/{{ request.build_absolute_uri }}'></button>    
+                        <button type="button" class="btn btn-light-outline" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">QR Code</button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" type="button"><img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.build_absolute_uri }}'></button>    
+                        </div>
                     </div>
-                    <div>
+                    <!--div>
                         {{ request.build_absolute_uri }}
-                    </div>
+                    </div -->
                 </div>
             </aside>
         </div>
