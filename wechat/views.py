@@ -1,43 +1,42 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-import hashlib
-import json
-from lxml import etree
-from django.utils.encoding import smart_str
-from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from auto_reply.views import auto_reply_main # 修改这里
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import View
+from django.template import loader, Context
+from xml.etree import ElementTree as ET
+import time
+import hashlib
 
-# Create your views here.
-
- 
-WEIXIN_TOKEN = '909363995'
- 
-@csrf_exempt
-def weixin_main(request):
-    """
-    所有的消息都会先进入这个函数进行处理，函数包含两个功能，
-    微信接入验证是GET方法，
-    微信正常的收发消息是用POST方法。
-    """
-    if request.method == "GET":
-        signature = request.GET.get("signature", None)
-        timestamp = request.GET.get("timestamp", None)
-        nonce = request.GET.get("nonce", None)
-        echostr = request.GET.get("echostr", None)
-        token = WEIXIN_TOKEN
-        tmp_list = [token, timestamp, nonce]
-        tmp_list.sort()
-        tmp_str = "%s%s%s" % tuple(tmp_list)
-        tmp_str = hashlib.sha1(tmp_str).hexdigest()
-        if tmp_str == signature:
-            return HttpResponse(echostr)
-        else:
-            return HttpResponse("weixin  index")
-    else:
-        xml_str = smart_str(request.body)
-        request_xml = etree.fromstring(xml_str)
-        #response_xml = auto_reply_main(request_xml)# 修改这里
-        response_xml = request_xml
-        return HttpResponse(response_xml)
+class WeChat(View):
+  #这里我当时写成了防止跨站请求伪造，其实不是这样的，恰恰相反。因为django默认是开启了csrf防护中间件的
+  #所以这里使用@csrf_exempt是单独为这个函数去掉这个防护功能。
+  @csrf_exempt
+  def dispatch(self, *args, **kwargs):
+    return super(WeChat, self).dispatch(*args, **kwargs)
+    
+  def get(self, request):
+  
+    #下面这四个参数是在接入时，微信的服务器发送过来的参数
+    signature = request.GET.get('signature', None)
+    timestamp = request.GET.get('timestamp', None)
+    nonce = request.GET.get('nonce', None)
+    echostr = request.GET.get('echostr', None)
+    
+    #这个token是我们自己来定义的，并且这个要填写在开发文档中的Token的位置
+    token = '909363995' #'这里的token需要自己设定，主要是和微信的服务器完成验证使用'
+    
+    #把token，timestamp, nonce放在一个序列中，并且按字符排序
+    hashlist = [token, timestamp, nonce]
+    hashlist.sort()
+    
+    #将上面的序列合成一个字符串
+    hashstr = ''.join([s for s in hashlist])
+    
+    #通过python标准库中的sha1加密算法，处理上面的字符串，形成新的字符串。
+    hashstr = hashlib.sha1(hashstr).hexdigest()
+    
+    #把我们生成的字符串和微信服务器发送过来的字符串比较，
+    #如果相同，就把服务器发过来的echostr字符串返回去
+    if hashstr == signature:
+      return HttpResponse(echostr)

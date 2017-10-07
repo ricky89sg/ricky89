@@ -29,4 +29,6 @@ urlpatterns = [
     url(r'^search/', include('haystack.urls')),
     url(r'^all/rss/$', AllPostsRssFeed(), name='rss'),
     url(r'^qrcode/(.+)$', tools_view.generate_qrcode, name='qrcode'),
+    #url(r'/wechat/', include('wechat.urls'),name='wechat'),
 ]
+
