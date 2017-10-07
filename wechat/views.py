@@ -1,42 +1,48 @@
-# -*- coding: utf-8 -*-
+## coding=utf-8
 
-from django.http import HttpResponse
+
+import hashlib 
+from django.http import HttpResponse 
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import View
-from django.template import loader, Context
-from xml.etree import ElementTree as ET
-import time
-import hashlib
 
-class WeChat(View):
-  #这里我当时写成了防止跨站请求伪造，其实不是这样的，恰恰相反。因为django默认是开启了csrf防护中间件的
-  #所以这里使用@csrf_exempt是单独为这个函数去掉这个防护功能。
-  @csrf_exempt
-  def dispatch(self, *args, **kwargs):
-    return super(WeChat, self).dispatch(*args, **kwargs)
-    
-  def get(self, request):
-  
-    #下面这四个参数是在接入时，微信的服务器发送过来的参数
-    signature = request.GET.get('signature', None)
-    timestamp = request.GET.get('timestamp', None)
-    nonce = request.GET.get('nonce', None)
-    echostr = request.GET.get('echostr', None)
-    
-    #这个token是我们自己来定义的，并且这个要填写在开发文档中的Token的位置
-    token = '909363995' #'这里的token需要自己设定，主要是和微信的服务器完成验证使用'
-    
-    #把token，timestamp, nonce放在一个序列中，并且按字符排序
-    hashlist = [token, timestamp, nonce]
-    hashlist.sort()
-    
-    #将上面的序列合成一个字符串
-    hashstr = ''.join([s for s in hashlist])
-    
-    #通过python标准库中的sha1加密算法，处理上面的字符串，形成新的字符串。
-    hashstr = hashlib.sha1(hashstr).hexdigest()
-    
-    #把我们生成的字符串和微信服务器发送过来的字符串比较，
-    #如果相同，就把服务器发过来的echostr字符串返回去
-    if hashstr == signature:
-      return HttpResponse(echostr)
+
+wechat_token = '909363995'  # 改成你自己设置的 token 就可以啦.
+@csrf_exempt
+def wechat(request):
+    if request.method == "GET":    # 确定微信发来了 GET, 得到所有参数
+        signature = request.GET.get("signature", None)
+        timestamp = request.GET.get("timestamp", None)
+        nonce = request.GET.get("nonce", None)
+        echostr = request.GET.get("echostr", None)
+    	token = wechat_token 
+        range_dict = [token, timestamp, nonce] # 做成一个字典
+        range_dict.sort()  # 把字典排序
+        range_str = "%s%s%s" % tuple(range_dict)  # 转换成元祖
+        range_str = hashlib.sha1(range_str).hexdigest() 然后用 hashlib 加密一下.
+
+        if range_str == signature:
+            return HttpResponse(echostr)
+        else:
+            return HttpResponse("weixin  index")  # 随便返回点儿什么
+
+    elif request.method == "POST":
+		# do something about POST here
+		str_xml = request.body.decode('utf-8')    #use body to get raw data
+		xml = etree.fromstring(str_xml)            
+		toUserName = xml.find('ToUserName').text
+		fromUserName = xml.find('FromUserName').text
+		createTime = xml.find('CreateTime').text
+		msgType = xml.find('MsgType').text
+		content = xml.find('Content').text   #获得用户所输入的内容
+		msgId = xml.find('MsgId').text
+		return render(request, 'reply_text.xml',
+			{
+				'toUserName': fromUserName,
+				'fromUserName': toUserName,
+				'createTime': time.time(),
+				'msgType': msgType,
+				'content': content,
+			},
+			content_type = 'application/xml'
+		)
