@@ -35,8 +35,8 @@ def wechat(request):
     else:
         toUserName = xml.find('ToUserName').text
         fromUserName = xml.find('FromUserName').text
-        createTime = xml.find('CreateTime').text
-        msgType = xml.find('MsgType').text
+        #createTime = xml.find('CreateTime').text
+        #msgType = xml.find('MsgType').text
         content = xml.find('Content').text   #获得用户所输入的内容
         msgId = xml.find('MsgId').text
 
@@ -44,7 +44,7 @@ def wechat(request):
                       {'toUserName': fromUserName,
                        'fromUserName': toUserName,
                        'createTime': time.time(),
-                       'msgType': msgType,
+                       'msgType': 'text',
                        'content': content,
                        },
                        content_type = 'application/xml',
