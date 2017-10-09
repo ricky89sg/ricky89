@@ -1,7 +1,26 @@
-<xml>
+<!--xml>
 	<ToUserName><![CDATA[{{toUserName}}]]></ToUserName>
 	<FromUserName><![CDATA[{{fromUserName}}]]></fromUserName>
 	<CreateTime>{{createTime}}</CreateTime>
 	<MsgType><![CDATA[{{msgType}}]]></MsgType>
 	<Content><![CDATA[{{content}}]]></Content>
+</xml-->
+
+<!--xml>
+    <ToUserName><![CDATA[{{ toUserName }}]]></ToUserName>
+    <FromUserName><![CDATA[{{ fromUserName }}]]></FromUserName>
+    <CreateTime>{{ createTime }}</CreateTime>
+    <MsgType><![CDATA[msgType]]></MsgType>
+   
+    <Content><![CDATA[Hello, dude!]]></Content>
+    
+</xml-->
+
+$def with (toUserName,fromUser,createTime,msgType,content)
+<xml>
+<ToUserName><![CDATA[$toUserName]]></ToUserName>
+<FromUserName><![CDATA[$fromUserName]]></FromUserName>
+<CreateTime>$createTime</CreateTime>
+<MsgType><![CDATA[$msgType]]></MsgType>
+<Content><![CDATA[$content]]></Content>
 </xml>

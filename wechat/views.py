@@ -6,6 +6,7 @@ from lxml import etree
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.shortcuts import render
 #from auto_reply.views import auto_reply_main # 修改这里
  
 WEIXIN_TOKEN = '909363995'
@@ -46,7 +47,8 @@ def wechat(request):
                        'msgType': msgType,
                        'content': content,
                        },
-                       content_type = 'application/xml'
+                       #content_type = 'application/xml',
+                       content_type = 'text/xml'
         )
         '''
         regq = re.compile(r'\/.*$')
