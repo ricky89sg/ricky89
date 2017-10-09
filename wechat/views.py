@@ -39,7 +39,7 @@ def wechat(request):
         content = xml.find('Content').text   #获得用户所输入的内容
         msgId = xml.find('MsgId').text
 
-        return render(request, 'reply_text.xml',
+        return render(request, 'text_reply.xml',
                       {'toUserName': fromUserName,
                        'fromUserName': toUserName,
                        'createTime': time.time(),
