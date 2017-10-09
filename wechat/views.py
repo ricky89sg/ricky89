@@ -47,8 +47,8 @@ def wechat(request):
                        'msgType': msgType,
                        'content': content,
                        },
-                       #content_type = 'application/xml',
-                       content_type = 'text/xml'
+                       content_type = 'application/xml',
+                       #content_type = 'text/xml',
         )
         '''
         regq = re.compile(r'\/.*$')
