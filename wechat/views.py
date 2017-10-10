@@ -33,10 +33,12 @@ def wechat(request):
         else:
             return HttpResponse("weixin  index")
     else:
+    	str_xml = request.body.decode('utf-8')    #use body to get raw data
+        xml = etree.fromstring(str_xml)    #进行XML解析
         toUserName = xml.find('ToUserName').text
         fromUserName = xml.find('FromUserName').text
         #createTime = xml.find('CreateTime').text
-        #msgType = xml.find('MsgType').text
+        msgType = xml.find('MsgType').text
         content = xml.find('Content').text   #获得用户所输入的内容
         msgId = xml.find('MsgId').text
 
@@ -44,7 +46,7 @@ def wechat(request):
                       {'toUserName': fromUserName,
                        'fromUserName': toUserName,
                        'createTime': time.time(),
-                       'msgType': 'text',
+                       'msgType': msgType,
                        'content': content,
                        },
                        content_type = 'application/xml',
