@@ -114,10 +114,9 @@ def wechat(request):
     message = wechat_instance.get_message()
  
     # 关注事件以及不匹配时的默认回复
-    response = wechat_instance.response_text(
-        content = (
-            'Hello, world!\n'
-            ))
+    #response = wechat_instance.response_text(content = ('Hello, world!\n'))
+    content = message.content
+    response = wechat_instance.response_text(content = content)
     '''
     if isinstance(message, TextMessage):
         # 当前会话内容
