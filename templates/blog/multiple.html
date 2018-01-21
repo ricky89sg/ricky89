@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
-{% block main %}
+{% block content %}
+    
+
+<main class="col-md-8">
     {% if error_msg %}
         <p>{{ error_msg }}</p>
     {% endif %}
@@ -82,5 +85,15 @@
                 {% endif %}
             </ul>
         </div>
-    {% endif %}
-{% endblock main %}
+    {% endif %}               
+</main>
+<aside class="col-md-4">
+
+    {% include 'blog/_right_side.html' %}
+
+
+</aside>
+
+
+
+{% endblock content %}
